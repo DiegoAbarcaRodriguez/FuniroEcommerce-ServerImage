@@ -8,10 +8,10 @@ export class ImageController {
 
     private handleError = (error: unknown, res: Response) => {
         if (error instanceof CustomError) {
-            res.status(error.statusCode).json({ ok: false, message: error.message });
+            return res.status(error.statusCode).json({ ok: false, message: error.message });
         }
         console.log(error)
-        res.status(500).json({ ok: false, message: 'Internal error server' });
+        return res.status(500).json({ ok: false, message: 'Internal error server' });
     }
 
     constructor(

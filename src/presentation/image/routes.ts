@@ -22,8 +22,9 @@ export class ImageRoutes {
 
         const router = Router();
 
-        router.use(ValidateIdentityMiddleware.execute);
-        router.post('/:id', ValidateImageMiddleware.execute, imageController.saveImage)
+        router.use(ValidateIdentityMiddleware.execute as any);
+        router.post('/:id', ValidateImageMiddleware.execute as any, imageController.saveImage)
+        router.post('/', ValidateImageMiddleware.execute as any, imageController.saveImage)
         router.get('/:name', imageController.getImage);
         router.delete('/:id', imageController.deleteImage);
 

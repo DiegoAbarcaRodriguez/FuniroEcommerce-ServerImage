@@ -10,7 +10,7 @@ export class ImageRepositoryImpl implements ImageRepository {
     getImage = (name: string): string => {
         return this.imageDataSource.getImage(name);
     }
-    saveImage = async (file: UploadedFile, id: number): Promise<void> => {
+    saveImage = async (file: UploadedFile, id?: number): Promise<string> => {
         return this.imageDataSource.saveImage(file, id);
     }
 

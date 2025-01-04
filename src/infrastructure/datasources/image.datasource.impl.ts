@@ -24,22 +24,26 @@ export class ImageDataSourceImpl implements ImageDatasource {
             throw error;
         }
     }
-    saveImage = async (file: UploadedFile, id: number): Promise<void> => {
+    saveImage = async (file: UploadedFile, id?: number): Promise<string> => {
         try {
 
             let existingImageFile: string = '';
+            let existingFurniture: any;
 
-            const existingFurniture = await prismaClient.furniture.findUnique({
-                where: {
-                    id
+            if (id) {
+                existingFurniture = await prismaClient.furniture.findUnique({
+                    where: {
+                        id
+                    }
+                });
+
+                if (!existingFurniture) {
+                    throw CustomError.notFound(`The furniture with ${id} does not exist`);
                 }
-            });
 
-            if (!existingFurniture) {
-                throw CustomError.notFound(`The furniture with ${id} does not exist`);
+                existingImageFile = existingFurniture.image ? `./uploads/${existingFurniture.image}` : '';
             }
 
-            existingImageFile = existingFurniture.image ? `./uploads/${existingFurniture.image}` : '';
 
             const extension = file.mimetype.split('/').at(1);
             const name = uuid() + '.' + extension;
@@ -54,17 +58,21 @@ export class ImageDataSourceImpl implements ImageDatasource {
                     fs.unlinkSync(existingImageFile);
                 }
 
-                existingFurniture.image = name;
-                await prismaClient.furniture.update({
-                    where: {
-                        id
-                    },
-                    data: existingFurniture
-                })
+                if (id) {
+                    existingFurniture.image = name;
+                    await prismaClient.furniture.update({
+                        where: {
+                            id
+                        },
+                        data: existingFurniture
+                    })
+                }
+
 
             });
 
-
+            return name;
+            
         } catch (error) {
             console.log(error);
             throw error;
@@ -86,7 +94,7 @@ export class ImageDataSourceImpl implements ImageDatasource {
             if (fs.existsSync(imageRoute)) {
                 fs.unlinkSync(imageRoute);
             }
-            
+
         } catch (error) {
             console.log(error);
             throw error;

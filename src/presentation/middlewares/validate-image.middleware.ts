@@ -7,7 +7,7 @@ export class ValidateImageMiddleware {
         try {
 
             if (!req.files || Object.keys(req.files).length === 0)
-                res.status(400).json({ ok: false, message: 'Theres is not image uploaded' })
+                return res.status(400).json({ ok: false, message: 'Theres is not image uploaded' })
 
             let image: UploadedFile | UploadedFile[] = req.files!.image;
 
@@ -18,14 +18,14 @@ export class ValidateImageMiddleware {
 
             const validExtensions = ['png', 'jpg', 'jpeg', 'webp', 'avif'];
             if (!validExtensions.includes(extension!))
-                res.status(400).json({ ok: false, message: 'The extension of the images is not valid, valid extensions:' + validExtensions });
+                return res.status(400).json({ ok: false, message: 'The extension of the images is not valid, valid extensions:' + validExtensions });
 
             req.body.image = image;
             next();
 
         } catch (error) {
             console.log(error);
-            throw res.status(500).json({ ok: false, message: 'Internal error server' });
+            return res.status(500).json({ ok: false, message: 'Internal error server' });
         }
 
 
